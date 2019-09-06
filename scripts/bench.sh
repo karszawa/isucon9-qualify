@@ -1,0 +1,18 @@
+/bin/bash -xe
+
+SERVICE_NAME=XXX
+
+ssh isuq9-01 "
+  cd /home/isucon/$SERVICE_NAME
+  : > logs/isuq9-01-access.log
+"
+
+read -p "Trigger bench from isucon portal and please press ENTER if the bench is finished -> "
+
+ssh isuq9-01 "
+  cd /home/isucon/$SERVICE_NAME
+  git pull
+  git add logs/isucon-q9-01-access.log
+  git commit -m "update access log - `date +%R`"
+  git push
+"
