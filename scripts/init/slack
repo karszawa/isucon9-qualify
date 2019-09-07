@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -u 
+readonly instances=$@
+for instance in ${instances}; do
+    scp /usr/local/bin/notify_slack ${instance}:~
+    scp $HOME/.notify_slack ${instance}:~/.notify_slack
+    ssh ${instance} sudo mv ~/nofity_slack /sbin/notify_slack    
+    ssh ${instance} sudo chmod +x /sbin/notify_slack
+done
