@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -u
+readonly instances=$@
+
+((index = 1))
+for instance in ${instances}; do
+    ssh -vLN 1000${index}:localhost:19999 ${instance} &
+    ((index = index + 1))
+done
+
+echo "done connecting"

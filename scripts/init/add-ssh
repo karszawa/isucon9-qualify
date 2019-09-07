@@ -1,0 +1,25 @@
+#!/bin/bash
+
+readonly public_key_in_local=~/.ssh/isu9q.pub
+readonly target_dir=/home/isucon/
+readonly instances=$@
+
+for instance in ${instances}; do
+    public_key=$(cat ${public_key_in_local})
+    ssh -l root ${instance} <<EOS
+
+      if [[ ! -d ${target_dir}/.ssh ]]; then
+          mkdir -p ${target_dir}/.ssh
+      fi
+
+      if [[ ! -d ~/.ssh ]]; then
+          mkdir -p ~/.ssh
+      fi
+
+      echo ${public_key} >> ${target_dir}/.ssh/authorized_keys
+      echo ${public_key} >> ~/.ssh/authorized_keys
+      chown -R isucon ${target_dir}/.ssh
+EOS
+done
+
+echo "Finished adding keys for isucon user"

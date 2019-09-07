@@ -1,39 +1,49 @@
 [Ya-Ha!](https://www.youtube.com/watch?v=CrMArekfBBM)
 
+## File Structure
+
+- /etc - conf files
+- /logs - access logs
+- /scripts - scripts
+- ...
+
 ## Instruction
 
 1. @everyone put shared keys as ~/.ssh/isu9q and ~/.ssh/isu9q.pub
+  * Add private keys in $HOME/home/isucon/.ssh/authorized_keys for `isucon` user.
 
 2. @karszawa copies ssh keys to servers
 
 ```bash
-# Run this command for each servers
-ssh-copy-id -i ~/.ssh/isu9q isucon@$ipaddr
+./scripts/init/add-ssh 150.95.190.130 163.44.170.175 150.95.152.119
 ```
 
 3. @everyone paste the script below to ~/.ssh/config with **correct ip addresses**
 
 ```
 Host isu9q-01
-  HostName $addr1
+  HostName 150.95.190.130
   User isucon
   Port 22
   IdentityFile ~/.ssh/isu9q
 
-Host isu9q-01
-  HostName $addr2
+Host isu9q-02
+  HostName 163.44.170.175
   User isucon
   Port 22
   IdentityFile ~/.ssh/isu9q
 
 Host isu9q-03
-  HostName $addr3
+  HostName 150.95.152.119
   User isucon
   Port 22
   IdentityFile ~/.ssh/isu9q
 ```
 
-4. @karszawa setup git
+4. @everyone run bench
+5. @everyone see application
+
+6. @karszawa setup git
 
 ```
 cd scripts
@@ -42,7 +52,7 @@ cd scripts
 ./git-slave.sh isu9q-03 service-name
 ```
 
-5. @karszawa move middleware config files to git repository and create symbolic links
+7. @karszawa move middleware config files to git repository and create symbolic links
 
 ```
 cd scripts
