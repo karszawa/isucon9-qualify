@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -u
+
+readonly root_dir=$(git rev-parse --show-toplevel)
+readonly script_abs=${root_dir}/scripts/init-netdata.sh
+readonly instances=$@
+
+wrap()
+{
+    title=${1}
+    shift
+    echo "
+----------------------------------------
+Title:
+    $title
+
+Output:
+    $@
+
+Date:
+    $(date)
+----------------------------------------
+    "
+}
+
+wrap "instances" ${instances}
+
+
+for instance in ${instances}; do
+    # Depends on machine
+    # sudo dpkg --continue -a
+
+    OUTPUT=$(ssh ${instance} sudo apt-get -y upgrade)
+    wrap "sudo agt-get -y upgrade" ${OUTPUT}
+
+    OUTPUT=$(ssh ${instances} "echo -en '\n
+         "yes"
+         "yes"
+         "yes"
+         "yes"
+         "yes"
+         "yes"
+         ' | bash <(curl -Ss https://my-netdata.io/kickstart.sh)")
+    wrap "install netdata" ${OUTPUT}
+
+    OUTPUT=$(ssh ${instances} "
+    []
+    ' | bash <(curl -Ss https://my-netdata.io/kickstart.sh)")
+    wrap "add systemd" ${OUTPUT}
+done
+
+echo "All netdata install is finished"
