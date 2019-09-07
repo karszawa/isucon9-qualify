@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/bin/bash -xe
 
-scp -i ~/.ssh/isu9q ~/.ssh/isu9q     isucon@$1:/home/isucon/.ssh/
-scp -i ~/.ssh/isu9q ~/.ssh/isu9q.pub isucon@$1:/home/isucon/.ssh/
-ssh -i ~/.ssh/isu9q isucon@$1 "chmod 600 ~/.ssh/isu9q"
-scp -i ~/.ssh/isu9q ./gitconfig isucon@$1:/home/isucon/.gitconfig
-scp -i ~/.ssh/isu9q ./sshconfig isucon@$1:/home/isucon/.ssh/config
+HOST_NAME=$1
+
+scp ~/.ssh/isu9q     $HOST_NAME:/home/isucon/.ssh/
+scp ~/.ssh/isu9q.pub $HOST_NAME:/home/isucon/.ssh/
+scp ./gitconfig $HOST_NAME:/home/isucon/.gitconfig
+scp ./sshconfig $HOST_NAME:/home/isucon/.ssh/config
+ssh $HOST_NAME "chmod 600 ~/.ssh/isu9q"

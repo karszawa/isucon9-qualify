@@ -33,6 +33,20 @@ Host isu9q-03
   IdentityFile ~/.ssh/isu9q
 ```
 
-4. @karszawa setup git in the master server
+4. @karszawa setup git
 
-5. @karszawa setup git in the slave servers
+```
+cd scripts
+./git-master.sh isu9q-01
+./git-slave.sh isu9q-02 service-name
+./git-slave.sh isu9q-03 service-name
+```
+
+5. @karszawa move middleware config files to git repository and create symbolic links
+
+```
+cd scripts
+./ln-master.sh isu9q-01 service-name
+./ln-slave.sh isu9q-02 service-name
+./ln-slave.sh isu9q-03 service-name
+```
