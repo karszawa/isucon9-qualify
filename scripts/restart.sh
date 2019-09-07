@@ -4,15 +4,16 @@ set -u
 readonly SERV_NAME=hoge
 readonly services="mariadb torb.go h2o netdata"
 readonly instances=$@
+readonly isucon_dir=/home/isucon
 
 for instance in ${instances}; do
   ssh $instance <<EOS
-    if [[ ! -d /home/isucon/$SERV_NAME ]]; then
-      echo "No file /home/isucon/$SERV_NAME" 2>&1
+    if [[ ! -d ${isucon_dir}/$SERV_NAME ]]; then
+      echo "No file ${isucon_dir}/$SERV_NAME" 2>&1
       exit 1
     fi
 
-    cd /home/isucon/$SERV_NAME/webapp/go
+    cd ${isucon_dir}/$SERV_NAME/webapp/go
 
     make
 

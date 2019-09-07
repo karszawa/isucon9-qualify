@@ -31,7 +31,7 @@ for instance in ${instances}; do
     # Depends on machine
     # sudo dpkg --continue -a
 
-    OUTPUT=$(ssh ${instance} sudo apt-get -y upgrade)
+    OUTPUT=$(ssh ${instance} sudo apt-get -y update)
     wrap "sudo agt-get -y update" ${OUTPUT}
 
     OUTPUT=$(ssh ${instances} "echo -en '\n
