@@ -10,8 +10,8 @@ for instance in ${instances}; do
     if [[ ! -d /home/isucon/$SERV_NAME ]]; then
       echo "No file /home/isucon/$SERV_NAME" 2>&1
       exit 1
-    fi 
-    
+    fi
+
     cd /home/isucon/$SERV_NAME/webapp/go
 
     make

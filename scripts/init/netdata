@@ -32,7 +32,7 @@ for instance in ${instances}; do
     # sudo dpkg --continue -a
 
     OUTPUT=$(ssh ${instance} sudo apt-get -y upgrade)
-    wrap "sudo agt-get -y upgrade" ${OUTPUT}
+    wrap "sudo agt-get -y update" ${OUTPUT}
 
     OUTPUT=$(ssh ${instances} "echo -en '\n
          "yes"

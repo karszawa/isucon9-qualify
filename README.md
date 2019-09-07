@@ -1,5 +1,12 @@
 [Ya-Ha!](https://www.youtube.com/watch?v=CrMArekfBBM)
 
+## File Structure
+
+- /etc - conf files
+- /logs - access logs
+- /scripts - scripts
+- ...
+
 ## Instruction
 
 1. @everyone put shared keys as ~/.ssh/isu9q and ~/.ssh/isu9q.pub
