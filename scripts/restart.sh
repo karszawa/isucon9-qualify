@@ -12,6 +12,10 @@ for instance in ${instances}; do
       exit 1
     fi
 
+    cd ${isucon_dir}
+
+    git pull
+
     cd ${isucon_dir}/$SERV_NAME/webapp/go
 
     make
