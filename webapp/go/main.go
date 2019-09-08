@@ -540,12 +540,11 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 var categoryMap map[int]Category
 
 func initializeCategoryMap() error {
-	tx := dbx.MustBegin()
 	ids := []struct {
 		ID int `db:"id"`
 	}{}
 
-	err := tx.Select(&ids, `SELECT id FROM categories`)
+	err := dbx.Select(&ids, `SELECT id FROM categories`)
 
 	if err != nil {
 		return err
