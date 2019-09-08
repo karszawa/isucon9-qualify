@@ -539,7 +539,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 
 var categoryMap map[int]Category
 
-func initializeCategoryMap(w http.ResponseWriter) {
+func initializeCategoryMap(w http.ResponseWriter) error {
 	tx := dbx.MustBegin()
 	ids := []struct {
 		ID int `db:"id"`
@@ -548,28 +548,33 @@ func initializeCategoryMap(w http.ResponseWriter) {
 	err := tx.Select(&ids, `SELECT id FROM categories`)
 
 	if err != nil {
-		log.Print(err)
-		outputErrorMsg(w, http.StatusInternalServerError, "db error")
+		return err
 	}
 
 	for _, obj := range ids {
 		categoryMap[obj.ID], err = _getCategoryByID(dbx, obj.ID)
 
 		if err != nil {
-			log.Print(err)
-			outputErrorMsg(w, http.StatusInternalServerError, "db error")
+			return err
 		}
 	}
+
+	return nil
 }
 
 func postInitialize(w http.ResponseWriter, r *http.Request) {
 	defer measure.Start("postInitialize").Stop()
 
-	initializeCategoryMap(w)
+	err := initializeCategoryMap(w)
+
+	if err != nil {
+		log.Print(err)
+		outputErrorMsg(w, http.StatusInternalServerError, "initialize category error")
+	}
 
 	ri := reqInitialize{}
 
-	err := json.NewDecoder(r.Body).Decode(&ri)
+	err = json.NewDecoder(r.Body).Decode(&ri)
 	if err != nil {
 		outputErrorMsg(w, http.StatusBadRequest, "json decode error")
 		return
@@ -1998,7 +2003,7 @@ func postShip(w http.ResponseWriter, r *http.Request) {
 		tx.Rollback()
 		return
 	}
-	
+
 	if itemStatus != ItemStatusTrading {
 		outputErrorMsg(w, http.StatusForbidden, "商品が取引中ではありません")
 		tx.Rollback()
