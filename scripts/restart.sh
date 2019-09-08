@@ -17,7 +17,7 @@ for instance in ${instances}; do
     cd ${isucon_dir}/$SERV_NAME
 
     git fetch
-    git co ${branch:-master}
+    git checkout ${branch:-master}
     git pull
 
     cd ${isucon_dir}/$SERV_NAME/webapp/go

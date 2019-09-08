@@ -26,4 +26,8 @@ $ curl -XPOST http://127.0.0.1:8000/initialize \
 
 還元率の変更で負荷の制御が可能
 
-##
+## getTransactions
+
+- TransactionsPerPage でリミットかけられる
+- item ごとにseller,category,buyer,transaction_evidenceの情報を追加して N+1 になってる
+
