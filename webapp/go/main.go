@@ -539,7 +539,7 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 
 var categoryMap map[int]Category
 
-func initializeCategoryMap(w http.ResponseWriter) error {
+func initializeCategoryMap() error {
 	tx := dbx.MustBegin()
 	ids := []struct {
 		ID int `db:"id"`
@@ -565,7 +565,7 @@ func initializeCategoryMap(w http.ResponseWriter) error {
 func postInitialize(w http.ResponseWriter, r *http.Request) {
 	defer measure.Start("postInitialize").Stop()
 
-	err := initializeCategoryMap(w)
+	err := initializeCategoryMap()
 
 	if err != nil {
 		log.Print(err)
