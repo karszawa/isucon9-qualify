@@ -116,6 +116,8 @@ type TransactionResponse2 struct {
 
 	SellerAccountName  string `db:"seller_account_name"`
 	SellerNumSellItems int    `db:"seller_num_sell_items"`
+	BuyerAccountName   string `db:"buyer_account_name"`
+	BuyerNumSellItem   int    `db:"buyer_num_sell_items"`
 }
 
 type TransactionResponse struct {
@@ -973,7 +975,9 @@ SELECT
   items.created_at,
   items.updated_at,
   sellers.account_name as seller_account_name,
-  sellers.num_sell_items as seller_num_sell_items
+  sellers.num_sell_items as seller_num_sell_items,
+  buyers.account_name as buyer_account_name,
+  buyers.num_sell_items as buyer_num_sell_items
 FROM (
   SELECT *
   FROM items
@@ -984,7 +988,8 @@ FROM (
   ORDER BY created_at DESC, id DESC
   LIMIT ?
 ) as items
-LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id;
+LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id
+left outer join users as buyers on buyers.id = items.buyer_id;
 `,
 			user.ID,
 			user.ID,
@@ -1020,7 +1025,9 @@ SELECT
   items.created_at,
   items.updated_at,
   sellers.account_name as seller_account_name,
-  sellers.num_sell_items as seller_num_sell_items
+  sellers.num_sell_items as seller_num_sell_items,
+  buyers.account_name as buyer_account_name,
+  buyers.num_sell_items as buyer_num_sell_items
 FROM (
   SELECT *
   FROM items
@@ -1030,7 +1037,8 @@ FROM (
   ORDER BY created_at DESC, id DESC
   LIMIT ?
 ) as items
-LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id;
+LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id
+left outer join users as buyers on buyers.id = items.buyer_id;
 `,
 			user.ID,
 			user.ID,
@@ -1082,14 +1090,12 @@ LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id;
 		}
 
 		if item.BuyerID != 0 {
-			buyer, err := getUserSimpleByID(tx, item.BuyerID)
-			if err != nil {
-				outputErrorMsg(w, http.StatusNotFound, "buyer not found")
-				tx.Rollback()
-				return
-			}
 			itemDetail.BuyerID = item.BuyerID
-			itemDetail.Buyer = &buyer
+			itemDetail.Buyer = &UserSimple{
+				ID:           item.BuyerID,
+				AccountName:  item.BuyerAccountName,
+				NumSellItems: item.BuyerNumSellItem,
+			}
 		}
 
 		transactionEvidence := TransactionEvidence{}
