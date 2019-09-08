@@ -28,6 +28,9 @@ for instance in ${instances}; do
 
     sudo systemctl restart netdata.service
     systemctl status netdata.service
+
+    cd
+    curl -XPOST http://127.0.0.1:8000/initialize -H 'Content-Type: application/json' -d @initialize.json
 EOS
 done
 
