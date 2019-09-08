@@ -18,6 +18,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
+	"github.com/kouzoh/platform-client-go/src/item-jp/v1"
 	"github.com/najeira/measure"
 	goji "goji.io"
 	"goji.io/pat"
@@ -1952,8 +1953,8 @@ func postShip(w http.ResponseWriter, r *http.Request) {
 
 	tx := dbx.MustBegin()
 
-	item := Item{}
-	err = tx.Get(&item, "SELECT * FROM `items` WHERE `id` = ? FOR UPDATE", itemID)
+	var itemStatus string
+	err = tx.Get(&itemStatus, "SELECT status FROM `items` WHERE `id` = ? FOR UPDATE", itemID)
 	if err == sql.ErrNoRows {
 		outputErrorMsg(w, http.StatusNotFound, "item not found")
 		tx.Rollback()
@@ -1965,8 +1966,8 @@ func postShip(w http.ResponseWriter, r *http.Request) {
 		tx.Rollback()
 		return
 	}
-
-	if item.Status != ItemStatusTrading {
+	
+	if itemStatus != ItemStatusTrading {
 		outputErrorMsg(w, http.StatusForbidden, "商品が取引中ではありません")
 		tx.Rollback()
 		return
