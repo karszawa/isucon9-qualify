@@ -10,7 +10,8 @@
 ## Instruction
 
 1. @everyone put shared keys as ~/.ssh/isu9q and ~/.ssh/isu9q.pub
-  * Add private keys in $HOME/home/isucon/.ssh/authorized_keys for `isucon` user.
+
+- Add private keys in \$HOME/home/isucon/.ssh/authorized_keys for `isucon` user.
 
 2. @karszawa copies ssh keys to servers
 
@@ -22,7 +23,7 @@
 
 ```
 Host isu9q-01
-  HostName 150.95.190.130
+  HostName 47.74.23.150
   User isucon
   Port 22
   IdentityFile ~/.ssh/isu9q

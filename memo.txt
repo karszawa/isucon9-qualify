@@ -1,0 +1,29 @@
+## 証明書
+
+また、WebサーバーのグローバルIPアドレスにアクセスするとTLS証明書に関するエラーが表示されます。 このエラーを回避するにはWebサーバーのグローバルIPアドレスが198.51.100.200だった場合、MacやLinuxであれば/etc/hostsに以下の行を追加する必要があります。
+
+198.51.100.200 isucon9.catatsuy.org
+
+## 外部API
+
+アプリケーションを利用する際はアプリケーションを起動した後、以下のように手動で POST /initialize を叩いて設定を反映してください。
+
+$ cat initialize.json
+{
+  "payment_service_url":"https://payment.isucon9q.catatsuy.org",
+  "shipment_service_url":"https://shipment.isucon9q.catatsuy.org"
+}
+$ curl -XPOST http://127.0.0.1:8000/initialize \
+-H 'Content-Type: application/json' \
+-d @initialize.json
+またベンチマーク走行時にこの値は書き換わるので、ベンチマーク走行後に確認したい場合も都度実行する必要があります。
+
+## 商品取得APIと更新
+
+新着一覧は自由に変更可能？
+
+## キャンペーン機能
+
+還元率の変更で負荷の制御が可能
+
+##

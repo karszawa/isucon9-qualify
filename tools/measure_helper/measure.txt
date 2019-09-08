@@ -21,7 +21,6 @@ import (
 	goji "goji.io"
 	"goji.io/pat"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/najeira/measure"
 )
 
 const (

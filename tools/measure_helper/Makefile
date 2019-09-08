@@ -1,4 +1,4 @@
-INPUT=./sample.txt
+INPUT=../../webapp/go/main.go
 
 all: run
 
