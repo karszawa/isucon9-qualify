@@ -29,13 +29,13 @@ Host isu9q-01
   IdentityFile ~/.ssh/isu9q
 
 Host isu9q-02
-  HostName 163.44.170.175
+  HostName 47.74.10.186
   User isucon
   Port 22
   IdentityFile ~/.ssh/isu9q
 
 Host isu9q-03
-  HostName 150.95.152.119
+  HostName 47.74.18.113
   User isucon
   Port 22
   IdentityFile ~/.ssh/isu9q
