@@ -1106,7 +1106,7 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 		// 	return
 		// }
 
-		if item.ShippingsReserveID == 0 {
+		if item.ShippingsReserveID == "" {
 			outputErrorMsg(w, http.StatusNotFound, "shipping not found")
 			tx.Rollback()
 			return
