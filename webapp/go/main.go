@@ -18,7 +18,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
-	"github.com/kouzoh/platform-client-go/src/item-jp/v1"
 	"github.com/najeira/measure"
 	goji "goji.io"
 	"goji.io/pat"
