@@ -479,9 +479,15 @@ func getUserSimpleByID(q sqlx.Queryer, userID int64) (userSimple UserSimple, err
 func getCategoryByID(q sqlx.Queryer, categoryID int) (category Category, err error) {
 	defer measure.Start("getCategoryByID").Stop()
 
+	return categoryMap[categoryID], nil
+}
+
+func _getCategoryByID(q sqlx.Queryer, categoryID int) (category Category, err error) {
+	defer measure.Start("_getCategoryByID").Stop()
+
 	err = sqlx.Get(q, &category, "SELECT * FROM `categories` WHERE `id` = ?", categoryID)
 	if category.ParentID != 0 {
-		parentCategory, err := getCategoryByID(q, category.ParentID)
+		parentCategory, err := _getCategoryByID(q, category.ParentID)
 		if err != nil {
 			return category, err
 		}
@@ -531,8 +537,35 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "index.html", struct{}{})
 }
 
+var categoryMap map[int]Category
+
+func initializeCategoryMap(w http.ResponseWriter) {
+	tx := dbx.MustBegin()
+	ids := []struct {
+		ID int `db:"id"`
+	}{}
+
+	err := tx.Select(&ids, `SELECT id FROM categories`)
+
+	if err != nil {
+		log.Print(err)
+		outputErrorMsg(w, http.StatusInternalServerError, "db error")
+	}
+
+	for _, obj := range ids {
+		categoryMap[obj.ID], err = _getCategoryByID(dbx, obj.ID)
+
+		if err != nil {
+			log.Print(err)
+			outputErrorMsg(w, http.StatusInternalServerError, "db error")
+		}
+	}
+}
+
 func postInitialize(w http.ResponseWriter, r *http.Request) {
 	defer measure.Start("postInitialize").Stop()
+
+	initializeCategoryMap(w)
 
 	ri := reqInitialize{}
 
