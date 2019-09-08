@@ -1000,7 +1000,7 @@ LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id
 		)
 		if err != nil {
 			log.Print(err)
-			outputErrorMsg(w, http.StatusInternalServerError, "db error")
+			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("db error: %v\n", err))
 			tx.Rollback()
 			return
 		}
@@ -1043,7 +1043,7 @@ LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id
 		)
 		if err != nil {
 			log.Print(err)
-			outputErrorMsg(w, http.StatusInternalServerError, "db error")
+			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("db error: %v\n", err))
 			tx.Rollback()
 			return
 		}
