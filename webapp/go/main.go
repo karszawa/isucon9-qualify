@@ -540,6 +540,8 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 var categoryMap map[int]Category
 
 func initializeCategoryMap() error {
+	categoryMap = map[int]Category{}
+
 	ids := []struct {
 		ID int `db:"id"`
 	}{}
