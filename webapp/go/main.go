@@ -110,18 +110,18 @@ type TransactionResponse struct {
 	Price                int       `db:"price"`
 	Description          string    `db:"description"`
 	ImageName            string    `db:"image_name"`
+	CategoryID           int       `db:"category_id"`
 	CreatedAt            time.Time `db:"created_at"`
 	UpdatedAt            time.Time `db:"updated_at"`
 	BuyerAccountName     string    `db:"buyer_account_name"`
 	BuyerNumSellItem     int       `db:"buyer_num_sell_item"`
 	SellerAccountName    string    `db:"seller_account_name"`
 	SellerNumSellItems   int       `db:"seller_num_sell_items"`
-	CategoryID           int       `db:"category_id"`
 	CategoryParentID     int       `db:"category_parent_id"`
 	CategoryCategoryName string    `db:"category_category_name"`
 	TesID                int64     `db:"tes_id"`
 	TesStatus            string    `db:"tes_status"`
-	ShippingsReserveID   int64     `db:"shippings_reserve_id"`
+	ShippingsReserveID   string    `db:"shippings_reserve_id"`
 }
 
 type ItemSimple struct {
