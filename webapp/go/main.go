@@ -1020,7 +1020,7 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 		categories.category_name as category_category_name,
 		tes.id as tes_id,
 		tes.status as tes_status,
-		shippings.reserve_id as shippings_reserv_id
+		shippings.reserve_id as shippings_reserve_id
 	from (
 		SELECT *
 		FROM items
