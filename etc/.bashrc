@@ -1,1 +1,1 @@
-export MYSQL_HOST=172.24.213.160 # isu9q-02
+export MYSQL_HOST=172.24.213.161 # isu9q-03
