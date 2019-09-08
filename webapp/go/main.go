@@ -973,7 +973,7 @@ SELECT
   items.created_at,
   items.updated_at,
   sellers.account_name as seller_account_name,
-  sellers.num_sell_items as seller_num_sell_items,
+  sellers.num_sell_items as seller_num_sell_items
 FROM (
   SELECT *
   FROM items
@@ -984,7 +984,7 @@ FROM (
   ORDER BY created_at DESC, id DESC
   LIMIT ?
 ) as items
-LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id
+LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id;
 `,
 			user.ID,
 			user.ID,
@@ -1020,7 +1020,7 @@ SELECT
   items.created_at,
   items.updated_at,
   sellers.account_name as seller_account_name,
-  sellers.num_sell_items as seller_num_sell_items,
+  sellers.num_sell_items as seller_num_sell_items
 FROM (
   SELECT *
   FROM items
@@ -1030,7 +1030,7 @@ FROM (
   ORDER BY created_at DESC, id DESC
   LIMIT ?
 ) as items
-LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id
+LEFT OUTER JOIN users as sellers on sellers.id = items.seller_id;
 `,
 			user.ID,
 			user.ID,
