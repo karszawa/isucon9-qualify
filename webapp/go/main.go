@@ -992,7 +992,7 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 		)
 		if err != nil {
 			log.Print(err)
-			outputErrorMsg(w, http.StatusInternalServerError, "db error")
+			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("db error (paging) %v", err))
 			tx.Rollback()
 			return
 		}
@@ -1044,7 +1044,7 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 		)
 		if err != nil {
 			log.Print(err)
-			outputErrorMsg(w, http.StatusInternalServerError, "db error")
+			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("db error (1st page) %v", err))
 			tx.Rollback()
 			return
 		}
@@ -1119,7 +1119,7 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 
 		if err != nil {
 			log.Print(err)
-			outputErrorMsg(w, http.StatusInternalServerError, "failed to request to shipment service")
+			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("failed to request to shipment service: %v", err))
 			tx.Rollback()
 			return
 		}
@@ -1127,7 +1127,7 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 		// NOTE: N+1!!! → parent category id を再帰的に取得しているが、最初にすべてのカテゴリに対して親カテゴリを計算してしまえば良いはず
 		category, err := getCategoryByID(tx, item.CategoryID)
 		if err != nil {
-			outputErrorMsg(w, http.StatusNotFound, "category not found")
+			outputErrorMsg(w, http.StatusNotFound, fmt.Sprintf("category not found: %v", err))
 			tx.Rollback()
 			return
 		}
