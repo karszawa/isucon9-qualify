@@ -12,7 +12,7 @@ for instance in ${instances}; do
       exit 1
     fi
 
-    cd ${isucon_dir}
+    cd ${isucon_dir}/$SERV_NAME
 
     git pull
 
@@ -28,6 +28,9 @@ for instance in ${instances}; do
 
     sudo systemctl restart netdata.service
     systemctl status netdata.service
+
+    cd ${isucon_dir}/$SERV_NAME
+    curl -XPOST http://127.0.0.1:8000/initialize -H 'Content-Type: application/json' -d @initialize.json
 EOS
 done
 

@@ -18,10 +18,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
+	"github.com/najeira/measure"
 	goji "goji.io"
 	"goji.io/pat"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/najeira/measure"
 )
 
 const (
@@ -345,6 +345,7 @@ func main() {
 	mux.HandleFunc(pat.Post("/login"), postLogin)
 	mux.HandleFunc(pat.Post("/register"), postRegister)
 	mux.HandleFunc(pat.Get("/reports.json"), getReports)
+	mux.HandleFunc(pat.Get("/status"), getStatus)
 	// Frontend
 	mux.HandleFunc(pat.Get("/"), getIndex)
 	mux.HandleFunc(pat.Get("/login"), getIndex)
@@ -362,6 +363,21 @@ func main() {
 	// Assets
 	mux.Handle(pat.Get("/*"), http.FileServer(http.Dir("../public")))
 	log.Fatal(http.ListenAndServe(":8000", mux))
+}
+
+func getStatus(w http.ResponseWriter, r *http.Request) {
+	stats := measure.GetStats()
+	stats.SortDesc("sum")
+
+	fmt.Fprintln(w, "key,count,sum,min,max,avg,rate,p95")
+
+	for _, s := range stats {
+		fmt.Fprintf(w, "%s,%d,%f,%f,%f,%f,%f,%f\n",
+			s.Key, s.Count, s.Sum, s.Min, s.Max, s.Avg, s.Rate, s.P95)
+	}
+
+	w.Header().Set("Content-Type", `text/csv; charset=UTF-8`)
+	w.Header().Set("Content-Disposition", `attachment; filename="report.csv"`)
 }
 
 func getSession(r *http.Request) *sessions.Session {
@@ -870,7 +886,6 @@ func getUserItems(w http.ResponseWriter, r *http.Request) {
 
 func getTransactions(w http.ResponseWriter, r *http.Request) {
 	defer measure.Start("getTransactions").Stop()
-
 
 	user, errCode, errMsg := getUser(r)
 	if errMsg != "" {
