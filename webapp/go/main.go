@@ -614,6 +614,7 @@ func postInitialize(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 		outputErrorMsg(w, http.StatusInternalServerError, "initialize category error")
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
