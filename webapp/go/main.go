@@ -284,6 +284,8 @@ func init() {
 func main() {
 	defer measure.Start("main").Stop()
 
+	return
+
 	host := os.Getenv("MYSQL_HOST")
 	if host == "" {
 		host = "127.0.0.1"
