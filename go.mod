@@ -1,3 +1,3 @@
 module github.com/karszawa/isucon9-qualify
 
-go 1.12
+go 1.13
