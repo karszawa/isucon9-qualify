@@ -564,16 +564,16 @@ func initializeCategoryMap() error {
 func postInitialize(w http.ResponseWriter, r *http.Request) {
 	defer measure.Start("postInitialize").Stop()
 
-	err := initializeCategoryMap()
+	// err := initializeCategoryMap()
 
-	if err != nil {
-		log.Print(err)
-		outputErrorMsg(w, http.StatusInternalServerError, "initialize category error")
-	}
+	// if err != nil {
+	// 	log.Print(err)
+	// 	outputErrorMsg(w, http.StatusInternalServerError, "initialize category error")
+	// }
 
-	ri := reqInitialize{}
+	// ri := reqInitialize{}
 
-	err = json.NewDecoder(r.Body).Decode(&ri)
+	err := json.NewDecoder(r.Body).Decode(&ri)
 	if err != nil {
 		outputErrorMsg(w, http.StatusBadRequest, "json decode error")
 		return
