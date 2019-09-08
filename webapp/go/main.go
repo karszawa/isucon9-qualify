@@ -114,7 +114,7 @@ type TransactionResponse struct {
 	CreatedAt            time.Time `db:"created_at"`
 	UpdatedAt            time.Time `db:"updated_at"`
 	BuyerAccountName     string    `db:"buyer_account_name"`
-	BuyerNumSellItem     int       `db:"buyer_num_sell_item"`
+	BuyerNumSellItem     int       `db:"buyer_num_sell_items"`
 	SellerAccountName    string    `db:"seller_account_name"`
 	SellerNumSellItems   int       `db:"seller_num_sell_items"`
 	CategoryParentID     int       `db:"category_parent_id"`
