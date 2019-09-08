@@ -544,7 +544,7 @@ func initializeCategoryMap() error {
 		ID int `db:"id"`
 	}{}
 
-	err := dbx.Select(&ids, `SELECT id FROM categories`)
+	err := dbx.Select(&ids, "SELECT `id` FROM categories")
 
 	if err != nil {
 		return err
@@ -564,14 +564,7 @@ func initializeCategoryMap() error {
 func postInitialize(w http.ResponseWriter, r *http.Request) {
 	defer measure.Start("postInitialize").Stop()
 
-	// err := initializeCategoryMap()
-
-	// if err != nil {
-	// 	log.Print(err)
-	// 	outputErrorMsg(w, http.StatusInternalServerError, "initialize category error")
-	// }
-
-	// ri := reqInitialize{}
+	ri := reqInitialize{}
 
 	err := json.NewDecoder(r.Body).Decode(&ri)
 	if err != nil {
@@ -614,6 +607,13 @@ func postInitialize(w http.ResponseWriter, r *http.Request) {
 		Campaign: 0,
 		// 実装言語を返す
 		Language: "Go",
+	}
+
+	err = initializeCategoryMap()
+
+	if err != nil {
+		log.Print(err)
+		outputErrorMsg(w, http.StatusInternalServerError, "initialize category error")
 	}
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
