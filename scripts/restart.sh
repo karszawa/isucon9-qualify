@@ -12,7 +12,7 @@ for instance in ${instances}; do
       exit 1
     fi
 
-    cd ${isucon_dir}
+    cd ${isucon_dir}/$SERV_NAME
 
     git pull
 
