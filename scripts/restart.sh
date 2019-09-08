@@ -2,7 +2,7 @@
 
 set -u
 readonly SERV_NAME=hoge
-readonly services="mariadb torb.go h2o netdata"
+readonly services="mariadb isucari.golang h2o netdata"
 readonly instances=$@
 readonly isucon_dir=/home/isucon
 
