@@ -1,8 +1,7 @@
 #!/bin/bash -xe
 
-set -u
-readonly SERV_NAME=hoge
-readonly services="mariadb isucari.golang h2o netdata"
+readonly SERV_NAME=isucari
+readonly services="isucari.golang nginx netdata"
 readonly instances=$@
 readonly isucon_dir=/home/isucon
 
@@ -17,10 +16,14 @@ for instance in ${instances}; do
 
     make
 
-    for service in ${services}; do
-      systemctl restart $service.service
-      systemctl status $service.service
-    done
+    sudo systemctl restart isucari.golang.service
+    systemctl status isucari.golang.service
+
+    sudo systemctl restart nginx.service
+    systemctl status nginx.service
+
+    sudo systemctl restart netdata.service
+    systemctl status netdata.service
 EOS
 done
 
