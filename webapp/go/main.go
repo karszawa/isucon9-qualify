@@ -972,11 +972,11 @@ from (
 	WHERE (seller_id = ? OR buyer_id = ?) AND status IN (?,?,?,?,?) AND (created_at < ?  OR (created_at <= ? AND id < ?))
 	ORDER BY created_at DESC, id DESC LIMIT ?
 ) as items
-inner join users as buyers on buyers.id = items.buyer_id
-inner join users as sellers on sellers.id = items.seller_id
-inner join categories on categories.id = items.category_id
-inner join transaction_evidences as tes on tes.item_id = items.id
-inner join shippings on shippings.transaction_evidence_id = tes.id;
+left outer join users as buyers on buyers.id = items.buyer_id
+left outer join users as sellers on sellers.id = items.seller_id
+left outer join categories on categories.id = items.category_id
+left outer join transaction_evidences as tes on tes.item_id = items.id
+left outer join shippings on shippings.transaction_evidence_id = tes.id;
 		`,
 			user.ID,
 			user.ID,
@@ -1027,11 +1027,11 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 		WHERE (seller_id = ? OR buyer_id = ?) AND status IN (?,?,?,?,?)
 		ORDER BY created_at DESC, id DESC LIMIT ?
 	) as items
-	inner join users as buyers on buyers.id = items.buyer_id
-	inner join users as sellers on sellers.id = items.seller_id
-	inner join categories on categories.id = items.category_id
-	inner join transaction_evidences as tes on tes.item_id = items.id
-	inner join shippings on shippings.transaction_evidence_id = tes.id;
+	left outer join users as buyers on buyers.id = items.buyer_id
+	left outer join users as sellers on sellers.id = items.seller_id
+	left outer join categories on categories.id = items.category_id
+	left outer join transaction_evidences as tes on tes.item_id = items.id
+	left outer join shippings on shippings.transaction_evidence_id = tes.id;
 		`,
 			user.ID,
 			user.ID,
@@ -1105,6 +1105,13 @@ inner join shippings on shippings.transaction_evidence_id = tes.id;
 		// 	tx.Rollback()
 		// 	return
 		// }
+
+		if item.TesID == 0 {
+			log.Print(err)
+			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("db error(tes): %v", err))
+			tx.Rollback()
+			return
+		}
 
 		if item.ShippingsReserveID == "" {
 			outputErrorMsg(w, http.StatusNotFound, "shipping not found")
