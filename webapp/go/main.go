@@ -1239,12 +1239,27 @@ left outer join shippings on shippings.transaction_evidence_id = tes.id;
 		// 	tx.Rollback()
 		// 	return
 		// }
+
+		if item.SellerID == 0 {
+			outputErrorMsg(w, http.StatusNotFound, "seller not found")
+			tx.Rollback()
+			return
+		}
+
 		// category, err := getCategoryByID(tx, item.CategoryID)
 		// if err != nil {
 		// 	outputErrorMsg(w, http.StatusNotFound, "category not found")
 		// 	tx.Rollback()
 		// 	return
 		// }
+
+		// NOTE: N+1!!! → parent category id を再帰的に取得しているが、最初にすべてのカテゴリに対して親カテゴリを計算してしまえば良いはず
+		category, err := getCategoryByID(tx, item.CategoryID)
+		if err != nil {
+			outputErrorMsg(w, http.StatusNotFound, fmt.Sprintf("category not found: %v", err))
+			tx.Rollback()
+			return
+		}
 
 		// itemDetail := ItemDetail{
 		// 	ID:       item.ID,
@@ -1265,6 +1280,33 @@ left outer join shippings on shippings.transaction_evidence_id = tes.id;
 		// 	CreatedAt: item.CreatedAt.Unix(),
 		// }
 
+		itemDetail := ItemDetail{
+			ID:       item.ID,
+			SellerID: item.SellerID,
+			Seller: &UserSimple{
+				ID:           item.SellerID,
+				AccountName:  item.SellerAccountName,
+				NumSellItems: item.SellerNumSellItems,
+			},
+			Status:      item.Status,
+			Name:        item.Name,
+			Price:       item.Price,
+			Description: item.Description,
+			ImageURL:    getImageURL(item.ImageName),
+			CategoryID:  item.CategoryID,
+			Category:    &category,
+			CreatedAt:   item.CreatedAt.Unix(),
+			// Category: &Category{
+			// 	ID:                 item.CategoryID,
+			// 	ParentID:           item.CategoryParentID,
+			// 	CategoryName:       item.CategoryCategoryName,
+			// 	ParentCategoryName: item.CategoryCategoryName,
+			// },
+			// TransactionEvidenceID:     item.TesID,
+			// TransactionEvidenceStatus: item.TesStatus,
+			// ShippingStatus:            ssr.Status,
+		}
+
 		// if item.BuyerID != 0 {
 		// 	buyer, err := getUserSimpleByID(tx, item.BuyerID)
 		// 	if err != nil {
@@ -1275,6 +1317,15 @@ left outer join shippings on shippings.transaction_evidence_id = tes.id;
 		// 	itemDetail.BuyerID = item.BuyerID
 		// 	itemDetail.Buyer = &buyer
 		// }
+
+		if item.BuyerID != 0 {
+			itemDetail.BuyerID = item.BuyerID
+			itemDetail.Buyer = &UserSimple{
+				ID:           item.BuyerID,
+				AccountName:  item.BuyerAccountName,
+				NumSellItems: item.BuyerNumSellItem,
+			}
+		}
 
 		// transactionEvidence := TransactionEvidence{}
 		// err = tx.Get(&transactionEvidence, "SELECT * FROM `transaction_evidences` WHERE `item_id` = ?", item.ID)
@@ -1291,60 +1342,28 @@ left outer join shippings on shippings.transaction_evidence_id = tes.id;
 			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("db error(tes): %v", err))
 			tx.Rollback()
 			return
-		}
+		} else {
+			if item.ShippingsReserveID == "" {
+				outputErrorMsg(w, http.StatusNotFound, "shipping not found")
+				tx.Rollback()
+				return
+			}
 
-		if item.ShippingsReserveID == "" {
-			outputErrorMsg(w, http.StatusNotFound, "shipping not found")
-			tx.Rollback()
-			return
-		}
+			// NOTE: N+1!!!
+			ssr, err := APIShipmentStatus(getShipmentServiceURL(), &APIShipmentStatusReq{
+				ReserveID: string(item.ShippingsReserveID),
+			})
 
-		// NOTE: N+1!!!
-		ssr, err := APIShipmentStatus(getShipmentServiceURL(), &APIShipmentStatusReq{
-			ReserveID: string(item.ShippingsReserveID),
-		})
+			if err != nil {
+				log.Print(err)
+				outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("failed to request to shipment service: %v", err))
+				tx.Rollback()
+				return
+			}
 
-		if err != nil {
-			log.Print(err)
-			outputErrorMsg(w, http.StatusInternalServerError, fmt.Sprintf("failed to request to shipment service: %v", err))
-			tx.Rollback()
-			return
-		}
-
-		// NOTE: N+1!!! → parent category id を再帰的に取得しているが、最初にすべてのカテゴリに対して親カテゴリを計算してしまえば良いはず
-		category, err := getCategoryByID(tx, item.CategoryID)
-		if err != nil {
-			outputErrorMsg(w, http.StatusNotFound, fmt.Sprintf("category not found: %v", err))
-			tx.Rollback()
-			return
-		}
-
-		itemDetail := ItemDetail{
-			ID:       item.ID,
-			SellerID: item.SellerID,
-			Seller: &UserSimple{
-				ID:           item.SellerID,
-				AccountName:  item.SellerAccountName,
-				NumSellItems: item.SellerNumSellItems,
-			},
-			BuyerID:     item.BuyerID,
-			Status:      item.Status,
-			Name:        item.Name,
-			Price:       item.Price,
-			Description: item.Description,
-			ImageURL:    getImageURL(item.ImageName),
-			CategoryID:  item.CategoryID,
-			Category:    &category,
-			// Category: &Category{
-			// 	ID:                 item.CategoryID,
-			// 	ParentID:           item.CategoryParentID,
-			// 	CategoryName:       item.CategoryCategoryName,
-			// 	ParentCategoryName: item.CategoryCategoryName,
-			// },
-			CreatedAt:                 item.CreatedAt.Unix(),
-			TransactionEvidenceID:     item.TesID,
-			TransactionEvidenceStatus: item.TesStatus,
-			ShippingStatus:            ssr.Status,
+			itemDetail.TransactionEvidenceID = item.TesID
+			itemDetail.TransactionEvidenceStatus = item.TesStatus
+			itemDetail.ShippingStatus = ssr.Status
 		}
 
 		// if transactionEvidence.ID > 0 {
